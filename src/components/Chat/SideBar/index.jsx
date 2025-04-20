@@ -11,23 +11,22 @@ const SideBar = ({
   showSidebar,
   setShowSidebar,
 }) => (
-  <div className="border-r border-purple_dark">
+  <div className="border-r border-gray-300 h-full">
     <div
-      className={`grid grid-rows-[auto,1fr,auto] w-p10 h-screen w mx-2  overflow-visible ${
-        showSidebar ? "block" : "hidden"
-      }`}
+      className="grid grid-rows-[auto,1fr,auto] h-screen overflow-visible"
+      style={{ width: '250px', zIndex: 10 }}
     >
-      <div className="border-b border-purple_dark">
+      <div className="border-b border-gray-300">
         <Header
           setChannelId={setChannelId}
           setShowSidebar={setShowSidebar}
           showSidebar={showSidebar}
         />
       </div>
-      <div className="h-full overflow-y-scroll">
+      <div className="h-full overflow-y-auto pb-24">
         <Channels setChannelId={setChannelId} channelId={channelId} />
       </div>
-      <div className="border-t border-purple_dark self-end">
+      <div className="border-t border-gray-300 self-end absolute bottom-0 w-full bg-white">
         <Footer isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
       </div>
     </div>

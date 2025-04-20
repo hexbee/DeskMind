@@ -1,10 +1,24 @@
 import { SiOpenai } from "react-icons/si";
 import { HiUser } from "react-icons/hi";
-import { TbCursorText } from "react-icons/tb";
 import ReactMarkdown from "react-markdown";
+import { useEffect, useState } from "react";
 
 const Message = ({ message = {}, isLoading = false }) => {
-  const { role, content: text } = message;
+  const { role, content: text, isStreaming } = message;
+  const [dots, setDots] = useState(".");
+  
+  useEffect(() => {
+    if (isLoading && !isStreaming) {
+      const interval = setInterval(() => {
+        setDots(prev => {
+          if (prev.length >= 3) return ".";
+          return prev + ".";
+        });
+      }, 500);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isLoading, isStreaming]);
 
   const isUser = role === "user";
 
@@ -31,8 +45,8 @@ const Message = ({ message = {}, isLoading = false }) => {
             <div className="flex flex-grow flex-col gap-3">
               <div className="min-h-20 flex flex-col items-start gap-4 whitespace-pre-wrap break-words">
                 <div className="w-full break-words">
-                  {isLoading ? (
-                    <TbCursorText className="h-6 w-6 animate-pulse" />
+                  {isLoading && !isStreaming ? (
+                    <div className="text-gray-600 font-medium">思考中{dots}</div>
                   ) : (
                     <ReactMarkdown>{text}</ReactMarkdown>
                   )}

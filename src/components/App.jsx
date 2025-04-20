@@ -17,7 +17,7 @@ const App = () => (
       pauseOnFocusLoss
       draggable
       pauseOnHover
-      theme="dark"
+      theme="light"
     />
   </>
 );

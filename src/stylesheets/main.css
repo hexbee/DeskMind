@@ -3,7 +3,14 @@
 @tailwind utilities;
 
 .modal-style .ant-modal-content {
-  background-color: #3a1f5c;
+  background-color: #f5f5f7;
+  color: #333333;
+}
+
+.modal-style .ant-modal-content input {
+  background-color: #ffffff;
+  border: 1px solid #e2e2e7;
+  color: #333333;
 }
 
 ::-webkit-scrollbar {

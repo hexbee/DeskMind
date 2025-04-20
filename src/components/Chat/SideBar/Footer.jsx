@@ -9,12 +9,12 @@ const Footer = ({ isModalOpen, setIsModalOpen }) => (
       className="border border-1 rounded-lg text-purple_lighter border-purple_dark w-full hover:bg-purple_dark"
       onClick={() => setIsModalOpen(!isModalOpen)}
     >
-      Update API Key
+      Settings
     </Button>
     <Button
       type="secondary"
       className="border border-1 rounded-lg text-purple_lighter border-purple_dark hover:bg-purple_dark"
-      href="https://github.com/Red-Spaces/app-gpt"
+      href="https://github.com/hexbee/DeskMind"
       target="_blank"
     >
       <FiGithub className="mt-1" />

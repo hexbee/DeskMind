@@ -4,8 +4,8 @@ import { Button } from "antd";
 
 const SideBarButton = ({ setShowSidebar, showSidebar }) => (
   <Button
-    type="secondary"
-    className="border border-1 rounded-lg text-purple_lighter border-purple_dark hover:bg-purple_dark z-50"
+    type="default"
+    className="border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 z-50"
     onClick={() => setShowSidebar(!showSidebar)}
   >
     <AiOutlineMenu />

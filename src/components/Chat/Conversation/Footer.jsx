@@ -1,5 +1,5 @@
-import React from "react";
-import { Input, Button } from "antd";
+import React, { useState } from "react";
+import { Input, Button, Switch } from "antd";
 import dbOperations from "../db";
 import { toast } from "react-toastify";
 import gpt from "../useGPT";
@@ -19,8 +19,10 @@ const Footer = ({
   isLoadingResponse,
   fetchMessages,
 }) => {
-  const { insertChannel, insertMessage } = dbOperations;
-  const { getCompletion } = gpt;
+  const { insertChannel, insertMessage, updateMessage } = dbOperations;
+  const { getCompletion, getCompletionStream } = gpt;
+  const [useStream, setUseStream] = useState(true); // 默认使用Streaming
+  const [streamingContent, setStreamingContent] = useState("");
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -39,38 +41,148 @@ const Footer = ({
       ...sanitizedConversation,
       { content: message, role: "user" },
     ];
+
+    // 立即添加用户消息到对话
     setSanitizedConversation(messages);
     setMessage("");
+
     try {
+      // 保存用户消息到数据库
       await insertMessage(id, message, true);
-      fetchMessages(id);
-      const gptResponse = await getCompletion(messages, id);
-      setSanitizedConversation([
-        ...sanitizedConversation,
-        { content: gptResponse, role: "system" },
-      ]);
-      fetchMessages(id);
+
+      if (useStream) {
+        // 添加一个临时的空AI回复消息，用于流式显示
+        const tempMessages = [
+          ...messages,
+          { content: "", role: "system", isStreaming: true }
+        ];
+        setSanitizedConversation(tempMessages);
+        setStreamingContent("");
+
+        // 使用流式API
+        await getCompletionStream(
+          messages,
+          id,
+          // 每次收到新块时调用
+          (chunk, fullContent, messageId) => {
+            setStreamingContent(fullContent);
+            const updatedMessages = [
+              ...messages,
+              { content: fullContent, role: "system", isStreaming: true }
+            ];
+            setSanitizedConversation(updatedMessages);
+          },
+          // 完成时调用
+          (fullContent, messageId) => {
+            // 保留最终的消息内容
+            if (fullContent) {
+              const finalMessages = [
+                ...messages,
+                { content: fullContent, role: "system" }
+              ];
+              setSanitizedConversation(finalMessages);
+              setStreamingContent("");
+
+              // 这里不立即fetchMessages，避免消息闪烁
+              // 延迟一段时间后再刷新，确保数据库操作完成
+              setTimeout(() => {
+                fetchMessages(id);
+              }, 500);
+            }
+          }
+        );
+      } else {
+        // 使用非流式API
+        const gptResponse = await getCompletion(messages, id);
+        if (gptResponse) {
+          const updatedMessages = [
+            ...messages,
+            { content: gptResponse, role: "system" },
+          ];
+          setSanitizedConversation(updatedMessages);
+
+          // 延迟刷新消息
+          setTimeout(() => {
+            fetchMessages(id);
+          }, 500);
+        }
+      }
     } catch (err) {
+      console.error("Error in chat:", err);
       toast.error("Error sending message");
     } finally {
       setIsLoadingResponse(false);
-      setMessage("");
     }
   };
 
   const regenerateResponse = async () => {
     setIsLoadingResponse(true);
     try {
-      const regenerationPrompt = [
-        ...sanitizedConversation,
-        { content: "Regenerate the last response", role: "user" },
-      ];
-      const gptResponse = await getCompletion(regenerationPrompt, channelId);
-      setSanitizedConversation([
-        ...sanitizedConversation,
-        { content: gptResponse, role: "system" },
-      ]);
+      // 移除最后一条系统消息（如果存在）
+      let messagesForRegeneration = [...sanitizedConversation];
+      if (messagesForRegeneration.length > 0 &&
+        messagesForRegeneration[messagesForRegeneration.length - 1].role === "system") {
+        messagesForRegeneration.pop();
+      }
+
+      if (useStream) {
+        // 添加一个临时的空消息，用于流式显示
+        const tempMessages = [
+          ...messagesForRegeneration,
+          { content: "", role: "system", isStreaming: true }
+        ];
+        setSanitizedConversation(tempMessages);
+        setStreamingContent("");
+
+        // 使用流式API
+        await getCompletionStream(
+          messagesForRegeneration,
+          channelId,
+          // 每次收到新块时调用
+          (chunk, fullContent, messageId) => {
+            setStreamingContent(fullContent);
+            const updatedMessages = [
+              ...messagesForRegeneration,
+              { content: fullContent, role: "system", isStreaming: true }
+            ];
+            setSanitizedConversation(updatedMessages);
+          },
+          // 完成时调用
+          (fullContent, messageId) => {
+            // 保留最终的消息内容
+            if (fullContent) {
+              const finalMessages = [
+                ...messagesForRegeneration,
+                { content: fullContent, role: "system" }
+              ];
+              setSanitizedConversation(finalMessages);
+              setStreamingContent("");
+
+              // 延迟刷新
+              setTimeout(() => {
+                fetchMessages(channelId);
+              }, 500);
+            }
+          }
+        );
+      } else {
+        // 使用非流式API
+        const gptResponse = await getCompletion(messagesForRegeneration, channelId);
+        if (gptResponse) {
+          const updatedMessages = [
+            ...messagesForRegeneration,
+            { content: gptResponse, role: "system" },
+          ];
+          setSanitizedConversation(updatedMessages);
+
+          // 延迟刷新
+          setTimeout(() => {
+            fetchMessages(channelId);
+          }, 500);
+        }
+      }
     } catch (err) {
+      console.error("Error regenerating:", err);
       toast.error("Error regenerating response");
     } finally {
       setIsLoadingResponse(false);
@@ -122,10 +234,19 @@ const Footer = ({
               }
             />
           </div>
+          <div className="flex items-center justify-end mt-2 mr-2">
+            <span className="text-xs text-purple_lighter mr-2">Streaming</span>
+            <Switch
+              size="small"
+              checked={useStream}
+              onChange={setUseStream}
+              className={useStream ? "bg-purple_dark" : ""}
+            />
+          </div>
         </div>
       </form>
       <div className="px-3 pt-2 pb-3 text-center text-xs text-purple_dark md:px-4 md:pt-3 md:pb-6">
-        <span>DesTalk is powered by OpenAI's API</span>
+        <span>DeskMind is powered by OpenAI's API</span>
       </div>
     </div>
   );

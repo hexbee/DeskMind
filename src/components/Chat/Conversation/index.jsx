@@ -69,7 +69,7 @@ const Conversation = ({
   return (
     <div className="relative h-full flex flex-col overflow-hidden w-full">
       {!showSidebar && (
-        <div className="m-2 absolute">
+        <div className="m-2 absolute z-20">
           <SideBarButton
             setShowSidebar={setShowSidebar}
             showSidebar={showSidebar}
@@ -84,7 +84,7 @@ const Conversation = ({
             {sanitizedConversation.map((message, index) => (
               <Message key={index} message={message} />
             ))}
-            {isLoadingResponse && <Message isLoading={true} />}
+            {isLoadingResponse && !sanitizedConversation.some(msg => msg.isStreaming) && <Message isLoading={true} />}
             <div className="w-full h-32 md:h-48 flex-shrink-0"></div>
           </div>
         )}

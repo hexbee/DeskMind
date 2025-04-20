@@ -1,13 +1,13 @@
 {
   "build": {
-    "beforeDevCommand": "yarn dev",
-    "beforeBuildCommand": "yarn build",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "DesTalk",
+    "productName": "DeskMind",
     "version": "0.1.2"
   },
   "tauri": {
@@ -21,7 +21,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "destalk-gpt.redisa.dev",
+      "identifier": "com.example.deskmind",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -37,7 +37,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "DesTalk",
+        "title": "DeskMind",
         "width": 1920,
         "height": 1080
       }

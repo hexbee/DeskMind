@@ -33,10 +33,10 @@ const ApiKeyModal = ({ isModalOpen, setIsModalOpen }) => {
       onCancel={handleCancel}
       footer={[
         <Button
-          className="border border-1 rounded-lg text-purple_lighter border-purple_darker"
           danger
           onClick={handleDelete}
           disabled={!apiKey}
+          className="bg-white border-red-500 text-red-500 hover:bg-red-50 rounded-md"
         >
           Delete
         </Button>,
@@ -44,31 +44,26 @@ const ApiKeyModal = ({ isModalOpen, setIsModalOpen }) => {
           key="submit"
           onClick={handleOk}
           disabled={!apiKey}
-          className="border border-1 rounded-lg text-purple_lighter border-purple_darker"
+          type="primary"
+          className="bg-accent hover:bg-accent_hover text-white rounded-md"
         >
           Submit
         </Button>,
       ]}
     >
-      <div className="space-y-2">
-        <Title level={3}>Set OpenAI API key</Title>
-        <Text>
-          You can get the API key{" "}
-          <a
-            href="https://platform.openai.com/account/api-keys"
-            target="_blank"
-          >
-            here
-          </a>
-          .
+      <div className="space-y-4">
+        <Title level={3} className="text-gray-800">Settings</Title>
+        <Text className="text-gray-600">
+          API key
         </Text>
-        <div className="border border-purple_darker rounded-md">
+        <div className="mt-2">
           <Input
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             placeholder="Enter API key"
             type="password"
-            bordered={false}
+            className="bg-gray-50 border border-gray-300 hover:border-gray-400 focus:border-accent text-gray-800 py-2 px-4 rounded-md w-full"
+            size="large"
           />
         </div>
       </div>
