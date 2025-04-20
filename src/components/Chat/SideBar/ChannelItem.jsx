@@ -277,8 +277,8 @@ const ChannelItem = ({ channel, isActive, onClick, fetchChannels, setChannelId }
           <Button 
             type="text" 
             block 
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100"
-            icon={channel.pinned ? <TbPinnedOff size="14" className="mr-2" /> : <TbPinned size="14" className="mr-2" />}
+            className="flex items-center justify-start px-4 py-2 text-gray-700 hover:bg-gray-100"
+            icon={channel.pinned ? <TbPinnedOff size="14" className="mr-2 flex-shrink-0" /> : <TbPinned size="14" className="mr-2 flex-shrink-0" />}
             onClick={(e) => {
               e.stopPropagation();
               setShowMenu(false);
@@ -286,13 +286,13 @@ const ChannelItem = ({ channel, isActive, onClick, fetchChannels, setChannelId }
               handleTogglePin();
             }}
           >
-            {channel.pinned ? "Unpin" : "Pin"}
+            <span>{channel.pinned ? "Unpin" : "Pin"}</span>
           </Button>
           <Button 
             type="text" 
             block 
-            className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100"
-            icon={<FiEdit2 size="14" className="mr-2" />}
+            className="flex items-center justify-start px-4 py-2 text-gray-700 hover:bg-gray-100"
+            icon={<FiEdit2 size="14" className="mr-2 flex-shrink-0" />}
             onClick={(e) => {
               e.stopPropagation();
               setShowMenu(false);
@@ -300,14 +300,14 @@ const ChannelItem = ({ channel, isActive, onClick, fetchChannels, setChannelId }
               setIsHovering(false); // Hide three dots icon
             }}
           >
-            Rename
+            <span>Rename</span>
           </Button>
           <Button 
             type="text" 
             block
             danger
-            className="flex items-center px-4 py-2 text-red-600 hover:bg-gray-100"
-            icon={<FiTrash2 size="14" className="mr-2" />}
+            className="flex items-center justify-start px-4 py-2 text-red-600 hover:bg-gray-100"
+            icon={<FiTrash2 size="14" className="mr-2 flex-shrink-0" />}
             onClick={(e) => {
               e.stopPropagation();
               setShowMenu(false);
@@ -315,7 +315,7 @@ const ChannelItem = ({ channel, isActive, onClick, fetchChannels, setChannelId }
               setIsHovering(false); // Hide three dots icon
             }}
           >
-            Delete
+            <span>Delete</span>
           </Button>
         </div>
       )}
