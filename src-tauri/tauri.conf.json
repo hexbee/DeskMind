@@ -24,12 +24,8 @@
       "webviewInstallMode": {
         "type": "downloadBootstrapper"
       },
-      "wix": {
-        "enabled": false
-      },
-      "nsis": {
-        "enabled": false
-      }
+      "wix": null,
+      "nsis": null
     }
   },
   "productName": "DeskMind",
