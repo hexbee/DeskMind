@@ -7,8 +7,12 @@
   },
   "bundle": {
     "active": true,
-    "targets": "x86_64-pc-windows-msvc",
-    "icon": ["icons/icon.ico"],
+    "targets": [
+      "x86_64-pc-windows-msvc"
+    ],
+    "icon": [
+      "icons/icon.ico"
+    ],
     "resources": [],
     "externalBin": [],
     "copyright": "Copyright © 2025 DeskMind",
