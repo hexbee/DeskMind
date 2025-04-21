@@ -81,7 +81,7 @@ jobs:
 
       - name: Create portable zip
         run: |
-          cd src-tauri/target/release
+          cd src-tauri/target/x86_64-pc-windows-msvc/release
           7z a DeskMind_${{ github.event.inputs.version }}_portable.zip DeskMind.exe WebView2Loader.dll
         shell: bash
 
@@ -89,4 +89,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: portable
-          path: src-tauri/target/release/DeskMind_${{ github.event.inputs.version }}_portable.zip
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/DeskMind_${{ github.event.inputs.version }}_portable.zip
+
+      - name: Upload MSI installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: msi-installer
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/DeskMind_${{ github.event.inputs.version }}_x64_en-US.msi
+
+      - name: Upload NSIS installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: nsis-installer
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/DeskMind_${{ github.event.inputs.version }}_x64-setup.exe
