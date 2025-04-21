@@ -10,23 +10,35 @@ jobs:
   publish-tauri:
     permissions:
       contents: write
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
+          cache: 'pnpm'
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: latest
-          
+          run_install: false
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
-        
+
+      - name: Install dependencies (Windows)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          rustup target add x86_64-pc-windows-msvc
+
       - name: Update version in configs
         shell: bash
         run: |
@@ -34,19 +46,25 @@ jobs:
           sed -i 's/"version": "[^"]*"/"version": "${{ github.event.inputs.version }}"/' src-tauri/tauri.conf.json
           # Update version in package.json
           sed -i 's/"version": "[^"]*"/"version": "${{ github.event.inputs.version }}"/' package.json
-          
+
       - name: Install frontend dependencies
         run: pnpm install
-        
-      - name: Build (Portable)
+
+      - name: Build the app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: v${{ github.event.inputs.version }}
-          releaseName: "v${{ github.event.inputs.version }}"
-          releaseBody: "Portable Windows build"
+          releaseName: "DeskMind v${{ github.event.inputs.version }}"
+          releaseBody: |
+            See the assets to download this version and install.
+            
+            Note: You can use the portable version (.exe.zip) or the installer (.msi).
           releaseDraft: true
           prerelease: false
-          args: --target x86_64-pc-windows-msvc
-          bundleType: "portable"
+          projectPath: .
+          includeDebug: false
+          includeRelease: true
+          includeUpdaterJson: true
+          updaterJsonKeepUniversal: false

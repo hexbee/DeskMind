@@ -7,9 +7,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": [
-      "x86_64-pc-windows-msvc"
-    ],
+    "targets": "all",
     "icon": [
       "icons/icon.ico"
     ],
@@ -25,6 +23,12 @@
       "timestampUrl": "",
       "webviewInstallMode": {
         "type": "downloadBootstrapper"
+      },
+      "wix": {
+        "enabled": false
+      },
+      "nsis": {
+        "enabled": false
       }
     }
   },
