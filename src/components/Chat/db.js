@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const openDatabase = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("app-gpt-db", 2);
+    const request = indexedDB.open("app-deskmind-db", 2);
 
     request.onerror = (event) => {
       reject(new Error("Failed to open the database"));

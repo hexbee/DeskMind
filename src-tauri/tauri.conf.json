@@ -14,7 +14,7 @@
     "resources": [],
     "externalBin": [],
     "copyright": "Copyright © 2025 DeskMind",
-    "category": "AITool",
+    "category": "Productivity",
     "shortDescription": "AI Chat Desktop Client",
     "longDescription": "An open-source desktop AI chat client built with Tauri and React.js",
     "windows": {
