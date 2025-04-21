@@ -7,7 +7,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["x86_64-pc-windows-msvc"],
+    "targets": "x86_64-pc-windows-msvc",
     "icon": ["icons/icon.ico"],
     "resources": [],
     "externalBin": [],
@@ -53,11 +53,7 @@
     ],
     "security": {
       "csp": null,
-      "dangerousRemoteDomainIpcAccess": [],
-      "freezePrototype": false,
-      "pattern": {
-        "use_regex": false
-      }
+      "freezePrototype": false
     }
   }
 }
