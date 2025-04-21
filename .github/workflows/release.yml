@@ -17,7 +17,8 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -25,7 +26,7 @@ jobs:
           version: latest
           run_install: false
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -33,25 +34,29 @@ jobs:
 
       - name: Verify pnpm installation
         run: pnpm --version
+        shell: bash
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install dependencies (Windows)
+      - name: Install Rust target
         if: matrix.platform == 'windows-latest'
-        run: |
-          rustup target add x86_64-pc-windows-msvc
+        run: rustup target add x86_64-pc-windows-msvc
+        shell: bash
 
       - name: Update version in configs
-        shell: bash
         run: |
-          # Update version in tauri.conf.json
           sed -i 's/"version": "[^"]*"/"version": "${{ github.event.inputs.version }}"/' src-tauri/tauri.conf.json
-          # Update version in package.json
           sed -i 's/"version": "[^"]*"/"version": "${{ github.event.inputs.version }}"/' package.json
+        shell: bash
 
       - name: Install frontend dependencies
         run: pnpm install
+        shell: bash
+
+      - name: Build frontend
+        run: pnpm build
+        shell: bash
 
       - name: Build the app
         uses: tauri-apps/tauri-action@v0
@@ -61,13 +66,27 @@ jobs:
           tagName: v${{ github.event.inputs.version }}
           releaseName: "DeskMind v${{ github.event.inputs.version }}"
           releaseBody: |
-            See the assets to download this version and install.
-            
-            Note: You can use the portable version (.exe.zip) or the installer (.msi).
+            See the assets to download
           releaseDraft: true
           prerelease: false
           projectPath: .
+          distPath: dist
           includeDebug: false
           includeRelease: true
-          includeUpdaterJson: true
-          updaterJsonKeepUniversal: false
+          includeUpdaterJson: false
+          args: --target x86_64-pc-windows-msvc
+
+      - name: Install 7-Zip
+        uses: milliewalky/setup-7-zip@v2
+
+      - name: Create portable zip
+        run: |
+          cd src-tauri/target/release
+          7z a DeskMind_${{ github.event.inputs.version }}_portable.zip DeskMind.exe WebView2Loader.dll
+        shell: bash
+
+      - name: Upload portable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: portable
+          path: src-tauri/target/release/DeskMind_${{ github.event.inputs.version }}_portable.zip

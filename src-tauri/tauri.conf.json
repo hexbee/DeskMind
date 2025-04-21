@@ -6,27 +6,7 @@
     "devUrl": "http://localhost:1420"
   },
   "bundle": {
-    "active": true,
-    "targets": "all",
-    "icon": [
-      "icons/icon.ico"
-    ],
-    "resources": [],
-    "externalBin": [],
-    "copyright": "Copyright © 2025 DeskMind",
-    "category": "Productivity",
-    "shortDescription": "AI Chat Desktop Client",
-    "longDescription": "An open-source desktop AI chat client built with Tauri and React.js",
-    "windows": {
-      "certificateThumbprint": null,
-      "digestAlgorithm": "sha256",
-      "timestampUrl": "",
-      "webviewInstallMode": {
-        "type": "downloadBootstrapper"
-      },
-      "wix": null,
-      "nsis": null
-    }
+    "active": false
   },
   "productName": "DeskMind",
   "version": "0.1.3",
